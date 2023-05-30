@@ -1,15 +1,15 @@
 import { Box, Card, Flex, Heading, Input, SimpleGrid, Skeleton, Stack, Text, useToast } from "@chakra-ui/react";
-import { Web3Button, useAddress, useContract, useContractRead, useTokenBalance } from "@thirdweb-dev/react";
-import { REWARD_TOKEN_ADDRESSES, STAKE_CONTRACT_ADDRESSES, STAKE_TOKEN_ADDRESSES } from "../cost/addresses";
+import { Web3Button, useAddress, useBalance, useContract, useContractRead, useTokenBalance } from "@thirdweb-dev/react";
+import { REWARD_TOKEN_ADDRESSES, STAKE_CONTRACT_ADDRESSES, STAKE_TOKEN_ABI, STAKE_TOKEN_ADDRESSES } from "../cost/addresses";
 import React, { useEffect, useState } from "react";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 export default function Stake() {
     const address = useAddress();
 
     const { 
         contract: stakeTokenContract
-    } = useContract(STAKE_TOKEN_ADDRESSES, "token");
+    } = useContract(STAKE_TOKEN_ADDRESSES, STAKE_TOKEN_ABI);
     const { 
         contract: rewardTokenContract
     } = useContract(REWARD_TOKEN_ADDRESSES, "token");
@@ -30,9 +30,8 @@ export default function Stake() {
     const {  
         data: stakeTokenBalance, 
         isLoading: loadingStakeTokenBalance 
-    } = useTokenBalance(
-            stakeTokenContract, 
-            address
+    } = useBalance(
+        STAKE_TOKEN_ADDRESSES, 
         );
 
     const {  
@@ -61,14 +60,14 @@ export default function Stake() {
     
     return (
         <Card p={5} mt={10}>
-            <Heading>Earn Reward Token</Heading>
+            <Heading>Earn Reward Token!</Heading>
             <SimpleGrid columns={2}>
                 <Card p={5} m={5}>
                     <Box textAlign={"center"} mb={5}>
                         <Text fontSize={"xl"} fontWeight={"bold"}>Stake Token:</Text>
                         <Skeleton isLoaded={!loadingStakeInfo && !loadingStakeTokenBalance}>
                             {stakeInfo && stakeInfo[0] ? (
-                                <Text>{ethers.utils.formatEther(stakeInfo[0])}{" $" + stakeTokenBalance?.symbol}</Text>
+                                <Text>{ethers.utils.formatUnits(stakeInfo[0], stakeTokenBalance?.decimals)}{" $" + stakeTokenBalance?.symbol}</Text>
                             ) : (
                                 <Text>0</Text>
                             )}
@@ -85,14 +84,10 @@ export default function Stake() {
                             <Web3Button
                                 contractAddress={STAKE_CONTRACT_ADDRESSES}
                                 action={async (contract) => {
-                                await stakeTokenContract?.setAllowance(
-                                        STAKE_CONTRACT_ADDRESSES,
-                                        stakeAmount
-                                );
 
                                 await contract.call(
                                     "stake",
-                                    [ethers.utils.parseEther(stakeAmount)]
+                                    [ethers.utils.parseUnits(stakeAmount,stakeTokenBalance?.decimals)]
                                 );
                                 resetValue();
                                 }}
