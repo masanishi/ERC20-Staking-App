@@ -110,7 +110,7 @@ export default function Stake() {
                             action={async (contract) => {
                                 await contract.call(
                                     "withdraw",
-                                    [ethers.utils.parseEther(unstakeAmount)]
+                                    [ethers.utils.parseUnits(unstakeAmount,stakeTokenBalance?.decimals)]
                                 );
                             }}
                             onSuccess={() => toast({
