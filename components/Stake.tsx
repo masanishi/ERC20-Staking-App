@@ -84,7 +84,7 @@ export default function Stake() {
                             <Web3Button
                                 contractAddress={STAKE_CONTRACT_ADDRESSES}
                                 action={async (contract) => {
-
+                                await stakeTokenContract?.erc20.setAllowance(STAKE_CONTRACT_ADDRESSES,stakeAmount)
                                 await contract.call(
                                     "stake",
                                     [ethers.utils.parseUnits(stakeAmount,stakeTokenBalance?.decimals)]
