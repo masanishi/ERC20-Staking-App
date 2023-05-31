@@ -60,11 +60,10 @@ export default function Stake() {
     
     return (
         <Card p={5} mt={10}>
-            <Heading>Earn Reward Token!</Heading>
             <SimpleGrid columns={2}>
                 <Card p={5} m={5}>
                     <Box textAlign={"center"} mb={5}>
-                        <Text fontSize={"xl"} fontWeight={"bold"}>Stake Token:</Text>
+                        <Text fontSize={"xl"} fontWeight={"bold"}>Stake XTR:</Text>
                         <Skeleton isLoaded={!loadingStakeInfo && !loadingStakeTokenBalance}>
                             {stakeInfo && stakeInfo[0] ? (
                                 <Text>{ethers.utils.formatUnits(stakeInfo[0], stakeTokenBalance?.decimals)}{" $" + stakeTokenBalance?.symbol}</Text>
